@@ -1,0 +1,82 @@
+openapi: "3.0.3"
+info:
+  title: "GitHubExplorer API"
+  description: "GitHubExplorer API"
+  version: "1.0.0"
+servers:
+- url: "http://localhost:8080"
+paths:
+  /githubrepos/{username}:
+    get:
+      description: ""
+      parameters:
+      - name: "username"
+        in: "path"
+        required: true
+        schema:
+          type: "string"
+      responses:
+        "200":
+          description: "OK"
+          content:
+            '*/*':
+              schema:
+                type: "array"
+                items:
+                  $ref: "#/components/schemas/GetUserReposResponse"
+        "502":
+          description: "Bad Gateway"
+          content:
+            '*/*':
+              schema:
+                $ref: "#/components/schemas/BadGatewayResponse"
+  /ready:
+    get:
+      description: ""
+      responses:
+        "200":
+          description: "OK"
+          content:
+            text/plain:
+              schema:
+                type: "string"
+              examples:
+                Example#1:
+                  value: "OK"
+components:
+  schemas:
+    RepoBranch:
+      type: "object"
+      properties:
+        name:
+          type: "string"
+        lastCommitSha:
+          type: "string"
+      required:
+      - "name"
+      - "lastCommitSha"
+    GetUserReposResponse:
+      type: "object"
+      properties:
+        repositoryName:
+          type: "string"
+        ownerLogin:
+          type: "string"
+        branches:
+          type: "array"
+          items:
+            $ref: "#/components/schemas/RepoBranch"
+      required:
+      - "repositoryName"
+      - "ownerLogin"
+      - "branches"
+    BadGatewayResponse:
+      type: "object"
+      properties:
+        status:
+          type: "integer"
+          format: "int32"
+        message:
+          type: "string"
+      required:
+      - "message"
